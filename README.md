@@ -8,17 +8,23 @@ prerequisites for runnning offline:
 one-time setup:
 
 in the atak-reactive CLI repo:
-cd path\to\atak-reactive\cli
-npm install
-npm run build
-npm link
+
+`cd path\to\atak-reactive\cli`
+
+`npm install`
+
+`npm run build`
+
+`npm link`
 
 in the plugin project's web/ folder:
-cd path\to\atak-plugin\web
-npm link @atak-reactive/cli
 
-to unlink (later) -> npm unlink @atak-reactive/cli && npm install in web/
+`cd path\to\atak-plugin\web`
+
+`npm link @atak-reactive/cli`
 
 from the plugin project web folder:
 
-npm run dev -- --flavor mil --offline
+`npm run dev -- --flavor mil --offline`
+
+to unlink (later) -> `npm unlink @atak-reactive/cli && npm install` in web/
