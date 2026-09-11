@@ -21,6 +21,7 @@ import {
 
 export interface DevOpts {
   port?: number;
+  offline?: boolean;
 }
 
 /** Locate the plugin project and its web/ folder, or exit with a usable message. */
@@ -43,9 +44,9 @@ function resolveProject(): { root: string; webDir: string } {
 }
 
 /** Build the debug APK and install it. No dev server, no tunnel. */
-function buildAndInstall(root: string, flavor: string, port: number): void {
+function buildAndInstall(root: string, flavor: string, port: number, offline?: boolean): void {
   const capFlavor = flavor.charAt(0).toUpperCase() + flavor.slice(1);
-  log(`Building debug APK (${capFlavor}Debug)...`);
+  log(`Building debug APK (${capFlavor}Debug)${offline ? ' [offline]' : ''}...`);
   try {
     const gradlew = process.platform === 'win32' ? 'gradlew.bat' : './gradlew';
     const buildGradle = join(root, 'app', 'build.gradle');
@@ -53,6 +54,7 @@ function buildAndInstall(root: string, flavor: string, port: number): void {
     // init wires `preBuild.dependsOn buildWebAssets`, an Exec task with no declared
     // inputs/outputs, so it always re-runs. Dev mode serves from Vite anyway.
     const skipWeb = gradleSrc.includes('buildWebAssets') ? ' -x buildWebAssets' : '';
+    const offlineFlag = offline ? ' --offline' : '';
 
     if (gradleSrc && !gradleSrc.includes('atak_reactive_dev_port')) {
       log(`Warning: no atak_reactive_dev_port resValue — plugin falls back to 5173.`);
@@ -60,7 +62,7 @@ function buildAndInstall(root: string, flavor: string, port: number): void {
     }
 
     execSync(
-      `${gradlew} assemble${capFlavor}Debug${skipWeb} -PdevServerPort=${port}`,
+      `${gradlew} assemble${capFlavor}Debug${skipWeb}${offlineFlag} -PdevServerPort=${port}`,
       { cwd: root, stdio: 'inherit' },
     );
   } catch {
@@ -146,7 +148,7 @@ export async function dev(flavor: string = 'civ', opts: DevOpts = {}): Promise<v
   const held = await preflightPort(port);
   log(`Preflight OK — device ${serial}, port ${port} reserved`);
 
-  buildAndInstall(root, flavor, port);
+  buildAndInstall(root, flavor, port, opts.offline);
   await runServer(webDir, port, held);
 }
 
