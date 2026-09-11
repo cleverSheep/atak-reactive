@@ -7,13 +7,13 @@ prerequisites for runnning offline:
 
 one-time setup:
 
-# In the atak-reactive CLI repo:
+in the atak-reactive CLI repo:
 cd path\to\atak-reactive\cli
 npm install
 npm run build
 npm link
 
-# In the plugin project's web/ folder:
+in the plugin project's web/ folder:
 cd path\to\atak-plugin\web
 npm link @atak-reactive/cli
 
