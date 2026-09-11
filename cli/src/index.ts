@@ -76,10 +76,11 @@ async function main(): Promise<void> {
         console.error(`\n  Error: ${(e as Error).message}\n`);
         process.exit(1);
       }
+      const offline = args.includes('--offline');
       const sub = args[1];
-      if (sub === 'install') await devInstall(getFlavor(), { port });
+      if (sub === 'install') await devInstall(getFlavor(), { port, offline});
       else if (sub === 'serve') await devServe({ port });
-      else if (!sub || sub.startsWith('--')) await dev(getFlavor(), { port });
+      else if (!sub || sub.startsWith('--')) await dev(getFlavor(), { port, offline});
       else {
         console.error(`\n  Error: unknown "dev ${sub}" — expected "install" or "serve".\n`);
         process.exit(1);
